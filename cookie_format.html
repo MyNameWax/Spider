@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cookie 格式化 - 爬虫工具箱</title>
+    <meta name="description" content="在线Cookie格式化工具，支持解析和美化Cookie字符串。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .input-area,
+        .output-area {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            padding: 12px 10px;
+            margin-bottom: 18px;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        .input-area:focus {
+            border: 1.5px solid #4fc3f7;
+            outline: none;
+        }
+
+        .output-area {
+            background: rgba(40, 50, 60, 0.7);
+            color: #b3e5fc;
+            margin-bottom: 0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #2196f344;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            box-shadow: 0 4px 16px #21cbf344;
+        }
+
+        .error {
+            color: #ff6b81;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .back-link {
+            margin-top: 18px;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+
+            .card {
+                padding: 18px 6px 18px 6px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="card">
+            <div class="card-title"><i class="ri-donut-chart-line"></i>Cookie 格式化</div>
+            <textarea class="input-area" id="cookie-input"
+                placeholder="请输入 Cookie 字符串，如 a=1; b=2; c=hello..."></textarea>
+            <div class="btn-row">
+                <button class="btn" onclick="formatCookie()">格式化</button>
+                <button class="btn" onclick="clearAll()" style="background: #444; color: #fff;">清空</button>
+            </div>
+            <div class="error" id="error-msg"></div>
+            <textarea class="output-area" id="cookie-output" placeholder="格式化后的 Cookie 会显示在这里..." readonly></textarea>
+            <a class="back-link" href="index.html">← 返回主页</a>
+        </div>
+    </div>
+    <script>
+        function formatCookie() {
+            const input = document.getElementById('cookie-input').value.trim();
+            const output = document.getElementById('cookie-output');
+            const error = document.getElementById('error-msg');
+            if (!input) {
+                error.textContent = '请输入 Cookie 字符串';
+                output.value = '';
+                return;
+            }
+            try {
+                const pairs = input.split(';').map(s => s.trim()).filter(Boolean);
+                if (pairs.length === 0) throw new Error('无有效 Cookie 键值对');
+                let result = '';
+                pairs.forEach(pair => {
+                    const idx = pair.indexOf('=');
+                    if (idx === -1) {
+                        result += pair + '\n';
+                    } else {
+                        const key = pair.slice(0, idx).trim();
+                        const value = pair.slice(idx + 1).trim();
+                        result += key + ' = ' + value + '\n';
+                    }
+                });
+                output.value = result.trim();
+                error.textContent = '';
+            } catch (e) {
+                error.textContent = '格式化失败：' + e.message;
+                output.value = '';
+            }
+        }
+        function clearAll() {
+            document.getElementById('cookie-input').value = '';
+            document.getElementById('cookie-output').value = '';
+            document.getElementById('error-msg').textContent = '';
+        }
+    </script>
+</body>
+
+</html>

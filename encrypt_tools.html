@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>加解密工具 - 爬虫工具箱</title>
+    <meta name="description" content="常用加密解密算法工具，支持MD5、SHA、Base64、URL、AES、DES、RC4、HMAC、RSA等。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .input-label {
+            color: #b3b8c3;
+            font-size: 0.98rem;
+            margin-bottom: 6px;
+        }
+
+        .input-area,
+        .output-area {
+            width: 100%;
+            min-height: 60px;
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            padding: 12px 10px;
+            margin-bottom: 18px;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        .input-area:focus {
+            border: 1.5px solid #4fc3f7;
+            outline: none;
+        }
+
+        .output-area {
+            background: rgba(40, 50, 60, 0.7);
+            color: #b3e5fc;
+            margin-bottom: 0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #2196f344;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            box-shadow: 0 4px 16px #21cbf344;
+        }
+
+        .select-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .select-row label {
+            color: #b3b8c3;
+            font-size: 1rem;
+            margin-right: 8px;
+        }
+
+        .select-row select,
+        .select-row input[type=text] {
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #444a;
+            background: #232526;
+            color: #e3e6f3;
+            padding: 6px 10px;
+        }
+
+        .error {
+            color: #ff6b81;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .back-link {
+            margin-top: 18px;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+
+            .card {
+                padding: 18px 6px 18px 6px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="card">
+            <div class="card-title"><i class="ri-lock-password-line"></i>加解密工具</div>
+            <div class="input-label">输入内容</div>
+            <textarea class="input-area" id="enc-input" placeholder="请输入要加密或解密的内容..."></textarea>
+            <div class="select-row">
+                <label>算法
+                    <select id="algo" onchange="onAlgoChange()">
+                        <option value="md5">MD5</option>
+                        <option value="sha1">SHA1</option>
+                        <option value="sha256">SHA256</option>
+                        <option value="sha512">SHA512</option>
+                        <option value="hmacmd5">HMAC-MD5</option>
+                        <option value="hmacsha1">HMAC-SHA1</option>
+                        <option value="hmacsha256">HMAC-SHA256</option>
+                        <option value="hmacsha512">HMAC-SHA512</option>
+                        <option value="base64">Base64 编码</option>
+                        <option value="base64decode">Base64 解码</option>
+                        <option value="urlencode">URL 编码</option>
+                        <option value="urldecode">URL 解码</option>
+                        <option value="aes">AES 加密</option>
+                        <option value="aesdec">AES 解密</option>
+                        <option value="des">DES 加密</option>
+                        <option value="desdec">DES 解密</option>
+                        <option value="rc4">RC4 加密</option>
+                        <option value="rc4dec">RC4 解密</option>
+                        <option value="rsa">RSA 加密</option>
+                        <option value="rsadec">RSA 解密</option>
+                    </select>
+                </label>
+                <label id="key-label" style="display:none;">密钥 <input type="text" id="key-input"
+                        placeholder="请输入密钥"></label>
+                <label id="iv-label" style="display:none;">IV <input type="text" id="iv-input"
+                        placeholder="可选IV"></label>
+                <label id="rsa-label" style="display:none;">公钥/私钥 <input type="text" id="rsa-input"
+                        placeholder="PEM格式"></label>
+            </div>
+            <div class="btn-row">
+                <button class="btn" id="btn-encrypt" onclick="doEncrypt()">加密</button>
+                <button class="btn" id="btn-decrypt" onclick="doDecrypt()" style="display:none;">解密</button>
+                <button class="btn" onclick="clearAll()" style="background: #444; color: #fff;">清空</button>
+            </div>
+            <div class="error" id="error-msg"></div>
+            <textarea class="output-area" id="enc-output" placeholder="结果会显示在这里..." readonly></textarea>
+            <a class="back-link" href="index.html">← 返回主页</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsrsasign@10.8.6/lib/jsrsasign-all-min.js"></script>
+    <script>
+        function onAlgoChange() {
+            const algo = document.getElementById('algo').value;
+            document.getElementById('key-label').style.display = /aes|des|rc4|hmac/.test(algo) ? '' : 'none';
+            document.getElementById('iv-label').style.display = /aes/.test(algo) ? '' : 'none';
+            document.getElementById('rsa-label').style.display = /rsa/.test(algo) ? '' : 'none';
+            // 按钮显示逻辑
+            const encBtn = document.getElementById('btn-encrypt');
+            const decBtn = document.getElementById('btn-decrypt');
+            if (/^md5$|^sha|^hmac|base64$|urlencode$|aes$|des$|rc4$|rsa$/.test(algo)) {
+                encBtn.style.display = '';
+            } else {
+                encBtn.style.display = 'none';
+            }
+            if (/base64decode$|urldecode$|aesdec$|desdec$|rc4dec$|rsadec$/.test(algo)) {
+                decBtn.style.display = '';
+            } else {
+                decBtn.style.display = 'none';
+            }
+        }
+        function clearAll() {
+            document.getElementById('enc-input').value = '';
+            document.getElementById('enc-output').value = '';
+            document.getElementById('error-msg').textContent = '';
+            document.getElementById('key-input').value = '';
+            document.getElementById('iv-input').value = '';
+            document.getElementById('rsa-input').value = '';
+        }
+        function doEncrypt() {
+            const algo = document.getElementById('algo').value;
+            const input = document.getElementById('enc-input').value;
+            const key = document.getElementById('key-input').value;
+            const iv = document.getElementById('iv-input').value;
+            const rsaKey = document.getElementById('rsa-input').value;
+            const output = document.getElementById('enc-output');
+            const error = document.getElementById('error-msg');
+            try {
+                let result = '';
+                if (algo === 'md5') {
+                    result = CryptoJS.MD5(input).toString();
+                } else if (algo === 'sha1') {
+                    result = CryptoJS.SHA1(input).toString();
+                } else if (algo === 'sha256') {
+                    result = CryptoJS.SHA256(input).toString();
+                } else if (algo === 'sha512') {
+                    result = CryptoJS.SHA512(input).toString();
+                } else if (algo === 'hmacmd5') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.HmacMD5(input, key).toString();
+                } else if (algo === 'hmacsha1') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.HmacSHA1(input, key).toString();
+                } else if (algo === 'hmacsha256') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.HmacSHA256(input, key).toString();
+                } else if (algo === 'hmacsha512') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.HmacSHA512(input, key).toString();
+                } else if (algo === 'base64') {
+                    result = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(input));
+                } else if (algo === 'urlencode') {
+                    result = encodeURIComponent(input);
+                } else if (algo === 'aes') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.AES.encrypt(input, CryptoJS.enc.Utf8.parse(key), iv ? { iv: CryptoJS.enc.Utf8.parse(iv) } : {}).toString();
+                } else if (algo === 'des') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.DES.encrypt(input, CryptoJS.enc.Utf8.parse(key)).toString();
+                } else if (algo === 'rc4') {
+                    if (!key) throw new Error('请输入密钥');
+                    result = CryptoJS.RC4.encrypt(input, CryptoJS.enc.Utf8.parse(key)).toString();
+                } else if (algo === 'rsa') {
+                    if (!rsaKey) throw new Error('请输入公钥');
+                    const pub = KEYUTIL.getKey(rsaKey);
+                    result = KJUR.crypto.Cipher.encrypt(input, pub);
+                }
+                output.value = result;
+                error.textContent = '';
+            } catch (e) {
+                error.textContent = '加密失败：' + e.message;
+                output.value = '';
+            }
+        }
+        function doDecrypt() {
+            const algo = document.getElementById('algo').value;
+            const input = document.getElementById('enc-input').value;
+            const key = document.getElementById('key-input').value;
+            const iv = document.getElementById('iv-input').value;
+            const rsaKey = document.getElementById('rsa-input').value;
+            const output = document.getElementById('enc-output');
+            const error = document.getElementById('error-msg');
+            try {
+                let result = '';
+                if (algo === 'base64decode') {
+                    result = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(input));
+                } else if (algo === 'urldecode') {
+                    result = decodeURIComponent(input);
+                } else if (algo === 'aesdec') {
+                    if (!key) throw new Error('请输入密钥');
+                    const bytes = CryptoJS.AES.decrypt(input, CryptoJS.enc.Utf8.parse(key), iv ? { iv: CryptoJS.enc.Utf8.parse(iv) } : {});
+                    result = CryptoJS.enc.Utf8.stringify(bytes);
+                } else if (algo === 'desdec') {
+                    if (!key) throw new Error('请输入密钥');
+                    const bytes = CryptoJS.DES.decrypt(input, CryptoJS.enc.Utf8.parse(key));
+                    result = CryptoJS.enc.Utf8.stringify(bytes);
+                } else if (algo === 'rc4dec') {
+                    if (!key) throw new Error('请输入密钥');
+                    const bytes = CryptoJS.RC4.decrypt(input, CryptoJS.enc.Utf8.parse(key));
+                    result = CryptoJS.enc.Utf8.stringify(bytes);
+                } else if (algo === 'rsadec') {
+                    if (!rsaKey) throw new Error('请输入私钥');
+                    const prv = KEYUTIL.getKey(rsaKey);
+                    result = KJUR.crypto.Cipher.decrypt(input, prv);
+                }
+                output.value = result;
+                error.textContent = '';
+            } catch (e) {
+                error.textContent = '解密失败：' + e.message;
+                output.value = '';
+            }
+        }
+        // 初始化按钮显示
+        onAlgoChange();
+    </script>
+</body>
+
+</html>

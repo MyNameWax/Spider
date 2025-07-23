@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>cURL 转多语言代码 - 爬虫工具箱</title>
+    <meta name="description" content="在线cURL转代码工具，支持Python、Node.js、Go、Java，自动生成依赖提示。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .input-area,
+        .output-area {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            padding: 12px 10px;
+            margin-bottom: 18px;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        .input-area:focus {
+            border: 1.5px solid #4fc3f7;
+            outline: none;
+        }
+
+        .output-area {
+            background: rgba(40, 50, 60, 0.7);
+            color: #b3e5fc;
+            margin-bottom: 0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #2196f344;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            box-shadow: 0 4px 16px #21cbf344;
+        }
+
+        .lang-select {
+            margin-bottom: 18px;
+            display: flex;
+            gap: 18px;
+        }
+
+        .lang-select label {
+            color: #b3b8c3;
+            font-size: 1rem;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .lang-select input[type="radio"] {
+            accent-color: #21cbf3;
+            margin-right: 4px;
+        }
+
+        .error {
+            color: #ff6b81;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .dep-tip {
+            color: #ffd166;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .back-link {
+            margin-top: 18px;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+
+            .card {
+                padding: 18px 6px 18px 6px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="card">
+            <div class="card-title"><i class="ri-terminal-window-line"></i>cURL 转多语言代码</div>
+            <textarea class="input-area" id="curl-input" placeholder="请输入 cURL 命令，如 curl -X POST ..."></textarea>
+            <div class="lang-select">
+                <label><input type="radio" name="lang" value="python" checked>Python</label>
+                <label><input type="radio" name="lang" value="node">Node.js</label>
+                <label><input type="radio" name="lang" value="go">Go</label>
+                <label><input type="radio" name="lang" value="java">Java</label>
+            </div>
+            <div class="btn-row">
+                <button class="btn" onclick="convertCurl()">转换</button>
+                <button class="btn" onclick="clearAll()" style="background: #444; color: #fff;">清空</button>
+            </div>
+            <div class="error" id="error-msg"></div>
+            <div class="dep-tip" id="dep-tip"></div>
+            <textarea class="output-area" id="code-output" placeholder="转换后的代码会显示在这里..." readonly></textarea>
+            <a class="back-link" href="index.html">← 返回主页</a>
+        </div>
+    </div>
+    <script>
+        function getLang() {
+            return document.querySelector('input[name="lang"]:checked').value;
+        }
+        function convertCurl() {
+            const input = document.getElementById('curl-input').value.trim();
+            const output = document.getElementById('code-output');
+            const error = document.getElementById('error-msg');
+            const depTip = document.getElementById('dep-tip');
+            if (!input) {
+                error.textContent = '请输入 cURL 命令';
+                output.value = '';
+                depTip.textContent = '';
+                return;
+            }
+            try {
+                const lang = getLang();
+                // 简单解析cURL（仅支持常见GET/POST/HEADERS/JSON/FORM，复杂情况可扩展）
+                const urlMatch = input.match(/curl\s+['"]?([^\s'"]+)['"]?/i);
+                let url = '';
+                if (urlMatch) {
+                    url = urlMatch[1];
+                } else {
+                    // 兼容 curl -X ... 'url' 形式
+                    const urlMatch2 = input.match(/curl[\s\S]*['"](https?:\/\/[^'\"]+)['"]/i);
+                    if (urlMatch2) url = urlMatch2[1];
+                }
+                let method = 'GET';
+                let headers = [];
+                let data = '';
+                if (/ -X (POST|PUT|DELETE|PATCH|GET)/i.test(input)) {
+                    method = input.match(/ -X (POST|PUT|DELETE|PATCH|GET)/i)[1];
+                } else if (/--request (POST|PUT|DELETE|PATCH|GET)/i.test(input)) {
+                    method = input.match(/--request (POST|PUT|DELETE|PATCH|GET)/i)[1];
+                }
+                // headers
+                const headerRegex = /-H\s+['"]([^'"]+)['"]/ig;
+                let m;
+                while ((m = headerRegex.exec(input)) !== null) {
+                    headers.push(m[1]);
+                }
+                // data
+                const dataMatch = input.match(/--data-raw\s+['"]([^'"]+)['"]|--data\s+['"]([^'"]+)['"]|-d\s+['"]([^'"]+)['"]/i);
+                if (dataMatch) {
+                    data = dataMatch[1] || dataMatch[2] || dataMatch[3] || '';
+                }
+                // 生成代码
+                let code = '';
+                let dep = '';
+                if (lang === 'python') {
+                    dep = '依赖：requests (pip install requests)';
+                    code = 'import requests\n';
+                    code += `url = '${url}'\n`;
+                    if (headers.length) {
+                        code += 'headers = {\n';
+                        headers.forEach(h => {
+                            const idx = h.indexOf(':');
+                            if (idx !== -1) {
+                                code += `    '${h.slice(0, idx).trim()}': '${h.slice(idx + 1).trim()}',\n`;
+                            }
+                        });
+                        code += '}\n';
+                    }
+                    if (data) code += `data = '''${data}'''\n`;
+                    code += `\nresponse = requests.${method.toLowerCase()}(\n    url,\n${headers.length ? '    headers=headers,\n' : ''}${data ? '    data=data,\n' : ''})\nprint(response.text)`;
+                } else if (lang === 'node') {
+                    dep = '依赖：axios (npm install axios)';
+                    code = "const axios = require('axios');\n";
+                    code += `const url = '${url}';\n`;
+                    if (headers.length) {
+                        code += 'const headers = {\n';
+                        headers.forEach(h => {
+                            const idx = h.indexOf(':');
+                            if (idx !== -1) {
+                                code += `  '${h.slice(0, idx).trim()}': '${h.slice(idx + 1).trim()}',\n`;
+                            }
+                        });
+                        code += '};\n';
+                    }
+                    if (data) code += `const data = \`${data}\`;\n`;
+                    code += `\naxios.${method.toLowerCase()}(url${data ? ', data' : ''}${headers.length ? ', { headers }' : ''})\n  .then(res => {\n    console.log(res.data);\n  })\n  .catch(err => {\n    console.error(err);\n  });`;
+                } else if (lang === 'go') {
+                    dep = '依赖：net/http, io/ioutil, bytes';
+                    code = 'package main\n\nimport (\n    "fmt"\n    "io/ioutil"\n    "net/http"\n    "bytes"\n)\n\nfunc main() {\n';
+                    if (data) {
+                        code += `    data := []byte(\`${data}\`)\n`;
+                        code += `    req, err := http.NewRequest("${method}", "${url}", bytes.NewBuffer(data))\n`;
+                    } else {
+                        code += `    req, err := http.NewRequest("${method}", "${url}", nil)\n`;
+                    }
+                    code += '    if err != nil {\n        panic(err)\n    }\n';
+                    if (headers.length) {
+                        headers.forEach(h => {
+                            const idx = h.indexOf(':');
+                            if (idx !== -1) {
+                                code += `    req.Header.Set("${h.slice(0, idx).trim()}", "${h.slice(idx + 1).trim()}")\n`;
+                            }
+                        });
+                    }
+                    code += '    client := &http.Client{}\n    resp, err := client.Do(req)\n    if err != nil {\n        panic(err)\n    }\n    defer resp.Body.Close()\n    body, _ := ioutil.ReadAll(resp.Body)\n    fmt.Println(string(body))\n}';
+                } else if (lang === 'java') {
+                    dep = '依赖：Apache HttpClient (Maven: org.apache.httpcomponents:httpclient)';
+                    code = 'import org.apache.http.client.methods.*;\nimport org.apache.http.impl.client.*;\nimport org.apache.http.util.EntityUtils;\nimport org.apache.http.entity.StringEntity;\n\npublic class CurlToJava {\n    public static void main(String[] args) throws Exception {\n        CloseableHttpClient client = HttpClients.createDefault();\n        HttpRequestBase request;\n';
+                    if (method === 'POST') {
+                        code += `        HttpPost post = new HttpPost("${url}");\n`;
+                        if (data) code += `        post.setEntity(new StringEntity("${data}"));\n`;
+                        if (headers.length) {
+                            headers.forEach(h => {
+                                const idx = h.indexOf(':');
+                                if (idx !== -1) {
+                                    code += `        post.setHeader("${h.slice(0, idx).trim()}", "${h.slice(idx + 1).trim()}");\n`;
+                                }
+                            });
+                        }
+                        code += '        request = post;\n';
+                    } else {
+                        code += `        request = new HttpGet("${url}");\n`;
+                        if (headers.length) {
+                            headers.forEach(h => {
+                                const idx = h.indexOf(':');
+                                if (idx !== -1) {
+                                    code += `        request.setHeader("${h.slice(0, idx).trim()}", "${h.slice(idx + 1).trim()}");\n`;
+                                }
+                            });
+                        }
+                    }
+                    code += '        CloseableHttpResponse response = client.execute(request);\n        String result = EntityUtils.toString(response.getEntity());\n        System.out.println(result);\n        response.close();\n        client.close();\n    }\n}';
+                }
+                output.value = code;
+                depTip.textContent = dep;
+                error.textContent = '';
+            } catch (e) {
+                error.textContent = '转换失败：' + e.message;
+                output.value = '';
+                depTip.textContent = '';
+            }
+        }
+        function clearAll() {
+            document.getElementById('curl-input').value = '';
+            document.getElementById('code-output').value = '';
+            document.getElementById('error-msg').textContent = '';
+            document.getElementById('dep-tip').textContent = '';
+        }
+    </script>
+</body>
+
+</html>

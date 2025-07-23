@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>爬虫工具箱 - 在线爬虫与数据处理工具</title>
+    <meta name="description" content="专注于爬虫与数据处理的在线工具箱，提供JSON格式化、对比、Cookie格式化、时间转换等实用工具。">
+    <meta name="keywords" content="爬虫工具,JSON格式化,数据处理,URL参数,时间转换,curl转requests,文本对比,JS格式化,SQL生成">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "爬虫工具箱",
+      "url": "https://your-domain.com/",
+      "description": "专注于爬虫与数据处理的在线工具箱，提供JSON格式化、对比、Cookie格式化、时间转换等实用工具。",
+      "author": {
+        "@type": "Person",
+        "name": "SpiderTools"
+      }
+    }
+    </script>
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 0 0 0;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 1200px;
+            margin: 36px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .group {
+            margin-bottom: 38px;
+        }
+
+        .group-title {
+            color: #b3b8c3;
+            font-weight: bold;
+            font-size: 1.18rem;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+            margin-top: 18px;
+        }
+
+        .card-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 28px 20px 22px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            position: relative;
+            min-height: 160px;
+        }
+
+        .card:hover {
+            background: rgba(80, 180, 255, 0.18);
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 6px 24px 0 #00bfff33;
+        }
+
+        .card i {
+            font-size: 2.2rem;
+            color: #4fc3f7;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.13rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            color: #b3b8c3;
+            font-size: 0.98rem;
+            margin-bottom: 0;
+        }
+
+        .card a {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            text-indent: -9999px;
+        }
+
+        @media (max-width: 900px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+
+            .card-list {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="group">
+            <div class="group-title">JSON 工具</div>
+            <div class="card-list">
+                <div class="card">
+                    <i class="ri-braces-line"></i>
+                    <div class="card-title">JSON 格式化</div>
+                    <div class="card-desc">美化、校验和高亮 JSON 数据</div>
+                    <a href="json_format.html">JSON 格式化</a>
+                </div>
+                <div class="card">
+                    <i class="ri-contrast-2-line"></i>
+                    <div class="card-title">JSON 对比</div>
+                    <div class="card-desc">对比两个 JSON 的差异</div>
+                    <a href="json_compare.html">JSON 对比</a>
+                </div>
+                <div class="card">
+                    <i class="ri-database-2-line"></i>
+                    <div class="card-title">JSON 转 SQL</div>
+                    <div class="card-desc">将 JSON 数据转换为 SQL 插入语句</div>
+                    <a href="json_to_sql.html">JSON 转 SQL</a>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <div class="group-title">文本与参数工具</div>
+            <div class="card-list">
+                <div class="card">
+                    <i class="ri-donut-chart-line"></i>
+                    <div class="card-title">Cookie 格式化</div>
+                    <div class="card-desc">解析和美化 Cookie 字符串</div>
+                    <a href="cookie_format.html">Cookie 格式化</a>
+                </div>
+                <div class="card">
+                    <i class="ri-javascript-line"></i>
+                    <div class="card-title">JS 格式化</div>
+                    <div class="card-desc">美化和高亮 JavaScript 代码</div>
+                    <a href="js_format.html">JS 格式化</a>
+                </div>
+                <div class="card">
+                    <i class="ri-link"></i>
+                    <div class="card-title">URL 参数提取</div>
+                    <div class="card-desc">提取 URL 中的参数并格式化显示</div>
+                    <a href="url_param_extract.html">URL 参数提取</a>
+                </div>
+                <div class="card">
+                    <i class="ri-contrast-drop-2-line"></i>
+                    <div class="card-title">文本对比</div>
+                    <div class="card-desc">对比两段文本的不同</div>
+                    <a href="text_compare.html">文本对比</a>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <div class="group-title">其他工具</div>
+            <div class="card-list">
+                <div class="card">
+                    <i class="ri-time-line"></i>
+                    <div class="card-title">时间转换</div>
+                    <div class="card-desc">时间戳与日期格式互转</div>
+                    <a href="time_convert.html">时间转换</a>
+                </div>
+                <div class="card">
+                    <i class="ri-terminal-window-line"></i>
+                    <div class="card-title">cURL 转 requests</div>
+                    <div class="card-desc">将 cURL 命令转换为 Python requests 代码</div>
+                    <a href="curl_to_requests.html">cURL 转 requests</a>
+                </div>
+                <div class="card">
+                    <i class="ri-image-line"></i>
+                    <div class="card-title">Base64 转 图片</div>
+                    <div class="card-desc">Base64转图片、图片转Base64</div>
+                    <a href="base64_image.html">Base64图片工具</a>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <div class="group-title">加解密工具</div>
+            <div class="card-list">
+                <div class="card">
+                    <i class="ri-lock-password-line"></i>
+                    <div class="card-title">加解密工具</div>
+                    <div class="card-desc">常用加密解密算法工具</div>
+                    <a href="encrypt_tools.html">加解密工具</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

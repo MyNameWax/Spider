@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>文本对比 - 爬虫工具箱</title>
+    <meta name="description" content="在线文本对比工具，支持高亮显示两段文本的不同。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .text-area {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .input-area {
+            width: 100%;
+            min-width: 0;
+            min-height: 110px;
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            padding: 12px 10px;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        .input-area:focus {
+            border: 1.5px solid #4fc3f7;
+            outline: none;
+        }
+
+        .input-col {
+            flex: 1 1 0;
+            min-width: 240px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            color: #b3b8c3;
+            font-size: 0.98rem;
+            margin-bottom: 6px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #2196f344;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            box-shadow: 0 4px 16px #21cbf344;
+        }
+
+        .error {
+            color: #ff6b81;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .diff-area {
+            background: rgba(40, 50, 60, 0.7);
+            color: #b3e5fc;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            padding: 12px 10px;
+            min-height: 80px;
+            margin-bottom: 0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .diff-add {
+            color: #7fff7f;
+            background: #1b3a1b;
+        }
+
+        .diff-del {
+            color: #ff6b81;
+            background: #3a1b1b;
+        }
+
+        .diff-mod {
+            color: #ffd166;
+            background: #3a2b1b;
+        }
+
+        .back-link {
+            margin-top: 18px;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .card {
+                padding: 18px 6px 18px 6px;
+            }
+
+            .text-area {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="card">
+            <div class="card-title"><i class="ri-contrast-drop-2-line"></i>文本对比</div>
+            <div class="text-area">
+                <div class="input-col">
+                    <div class="input-label">文本 1</div>
+                    <textarea class="input-area" id="text1" placeholder="请输入第一段文本..."></textarea>
+                </div>
+                <div class="input-col">
+                    <div class="input-label">文本 2</div>
+                    <textarea class="input-area" id="text2" placeholder="请输入第二段文本..."></textarea>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn" onclick="compareText()">对比</button>
+                <button class="btn" onclick="clearAll()" style="background: #444; color: #fff;">清空</button>
+            </div>
+            <div class="error" id="error-msg"></div>
+            <div class="diff-area" id="diff-area"></div>
+            <a class="back-link" href="index.html">← 返回主页</a>
+        </div>
+    </div>
+    <script>
+        function clearAll() {
+            document.getElementById('text1').value = '';
+            document.getElementById('text2').value = '';
+            document.getElementById('error-msg').textContent = '';
+            document.getElementById('diff-area').innerHTML = '';
+        }
+        function compareText() {
+            const t1 = document.getElementById('text1').value;
+            const t2 = document.getElementById('text2').value;
+            const error = document.getElementById('error-msg');
+            const diffArea = document.getElementById('diff-area');
+            if (!t1 || !t2) {
+                error.textContent = '请填写两段文本';
+                diffArea.innerHTML = '';
+                return;
+            }
+            error.textContent = '';
+            diffArea.innerHTML = diffLines(t1, t2);
+        }
+        // 行级diff
+        function diffLines(a, b) {
+            const aLines = a.split(/\r?\n/);
+            const bLines = b.split(/\r?\n/);
+            let html = '';
+            let i = 0, j = 0;
+            while (i < aLines.length || j < bLines.length) {
+                if (i < aLines.length && j < bLines.length) {
+                    if (aLines[i] === bLines[j]) {
+                        html += `<div>${escapeHTML(aLines[i])}</div>`;
+                        i++; j++;
+                    } else {
+                        html += `<div class='diff-mod'>文本1: ${escapeHTML(aLines[i])}</div>`;
+                        html += `<div class='diff-mod'>文本2: ${escapeHTML(bLines[j])}</div>`;
+                        i++; j++;
+                    }
+                } else if (i < aLines.length) {
+                    html += `<div class='diff-del'>仅在文本1: ${escapeHTML(aLines[i])}</div>`;
+                    i++;
+                } else {
+                    html += `<div class='diff-add'>仅在文本2: ${escapeHTML(bLines[j])}</div>`;
+                    j++;
+                }
+            }
+            return html;
+        }
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+    </script>
+</body>
+
+</html>
