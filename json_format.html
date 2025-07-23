@@ -6,7 +6,27 @@
     <title>JSON 格式化 - 爬虫工具箱</title>
     <meta name="description" content="在线JSON格式化工具，支持美化、校验和高亮JSON数据。">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
+    <!-- 版权信息 -->
+    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+
+    <!-- 防止复制代码的样式 -->
+    <style>
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .allow-select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
     <style>
         body {
             min-height: 100vh;
@@ -213,6 +233,7 @@
             <a class="back-link" href="index.html">← 返回主页</a>
         </div>
     </div>
+
     <script>
         function formatJSON() {
             const input = document.getElementById('json-input').value.trim();
@@ -238,6 +259,8 @@
             document.getElementById('error-msg').textContent = '';
         }
     </script>
+    <!-- 防止复制和查看源码的JavaScript -->
+    <script src="js/protect.js"></script>
 </body>
 
 </html>

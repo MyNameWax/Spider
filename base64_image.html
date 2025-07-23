@@ -3,210 +3,238 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Base64图片工具 - 爬虫工具箱</title>
-    <meta name="description" content="Base64转图片、图片转Base64，支持常见图片格式。">
+    <title>Base64 转图片 - 爬虫工具箱</title>
+    <meta name="description" content="在线Base64图片转换工具，支持Base64和图片格式互转。">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
+    <!-- 版权信息 -->
+    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+
+    <!-- 防止复制代码的样式 -->
     <style>
         body {
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #232526 0%, #414345 100%);
-            font-family: 'Segoe UI', 'Arial', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        .header {
-            width: 100vw;
-            max-width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            background: rgba(30, 32, 38, 0.85);
-            box-shadow: 0 2px 16px 0 #0003;
-            height: 90px;
+        .allow-select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
+    </style> html>
+    <html lang="zh-CN">
 
-        .avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            margin: 0 28px 0 38px;
-            background: #fff;
-            object-fit: cover;
-            box-shadow: 0 2px 8px #0002;
-        }
-
-        .site-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .site-title {
-            color: #fff;
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-        }
-
-        .site-desc {
-            color: #b3b8c3;
-            font-size: 1.08rem;
-            letter-spacing: 1px;
-        }
-
-        .main {
-            max-width: 700px;
-            margin: 38px auto 0 auto;
-            padding: 0 2vw 40px 2vw;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px 0 #0002;
-            padding: 32px 28px 28px 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            min-height: 320px;
-        }
-
-        .card-title {
-            color: #fff;
-            font-size: 1.18rem;
-            font-weight: 600;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-        }
-
-        .card-title i {
-            font-size: 1.5rem;
-            color: #4fc3f7;
-            margin-right: 10px;
-        }
-
-        .input-label {
-            color: #b3b8c3;
-            font-size: 0.98rem;
-            margin-bottom: 6px;
-        }
-
-        .input-area,
-        .output-area {
-            width: 100%;
-            min-height: 60px;
-            background: rgba(30, 32, 38, 0.7);
-            color: #e3e6f3;
-            border: 1px solid #444a;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
-            padding: 12px 10px;
-            margin-bottom: 18px;
-            resize: vertical;
-            transition: border 0.2s;
-        }
-
-        .input-area:focus {
-            border: 1.5px solid #4fc3f7;
-            outline: none;
-        }
-
-        .output-area {
-            background: rgba(40, 50, 60, 0.7);
-            color: #b3e5fc;
-            margin-bottom: 0;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .btn {
-            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 28px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 8px #2196f344;
-            transition: background 0.18s, box-shadow 0.18s;
-        }
-
-        .btn:hover {
-            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
-            box-shadow: 0 4px 16px #21cbf344;
-        }
-
-        .error {
-            color: #ff6b81;
-            font-size: 0.98rem;
-            margin-bottom: 10px;
-            min-height: 22px;
-        }
-
-        .img-preview {
-            display: block;
-            max-width: 100%;
-            max-height: 220px;
-            margin: 10px auto 0 auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px #0003;
-            background: #222;
-        }
-
-        .back-link {
-            margin-top: 18px;
-            color: #4fc3f7;
-            text-decoration: none;
-            font-size: 1rem;
-            display: inline-block;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 700px) {
-            .main {
-                max-width: 98vw;
-                padding: 0 1vw 30px 1vw;
+    <head>
+        <meta charset="UTF-8">
+        <title>Base64图片工具 - 爬虫工具箱</title>
+        <meta name="description" content="Base64转图片、图片转Base64，支持常见图片格式。">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+        <style>
+            body {
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #232526 0%, #414345 100%);
+                font-family: 'Segoe UI', 'Arial', sans-serif;
             }
 
-            .card {
-                padding: 18px 6px 18px 6px;
-            }
-        }
-
-        @media (max-width: 600px) {
             .header {
-                height: 70px;
+                width: 100vw;
+                max-width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                background: rgba(30, 32, 38, 0.85);
+                box-shadow: 0 2px 16px 0 #0003;
+                height: 90px;
             }
 
             .avatar {
-                width: 44px;
-                height: 44px;
-                margin: 0 12px 0 12px;
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                margin: 0 28px 0 38px;
+                background: #fff;
+                object-fit: cover;
+                box-shadow: 0 2px 8px #0002;
+            }
+
+            .site-info {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
 
             .site-title {
-                font-size: 1.1rem;
+                color: #fff;
+                font-size: 1.7rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                margin-bottom: 4px;
+            }
+
+            .site-desc {
+                color: #b3b8c3;
+                font-size: 1.08rem;
+                letter-spacing: 1px;
             }
 
             .main {
-                padding: 0 0 20px 0;
+                max-width: 700px;
+                margin: 38px auto 0 auto;
+                padding: 0 2vw 40px 2vw;
             }
-        }
-    </style>
-</head>
+
+            .card {
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 14px;
+                box-shadow: 0 2px 12px 0 #0002;
+                padding: 32px 28px 28px 28px;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                border: 1px solid rgba(255, 255, 255, 0.10);
+                min-height: 320px;
+            }
+
+            .card-title {
+                color: #fff;
+                font-size: 1.18rem;
+                font-weight: 600;
+                margin-bottom: 18px;
+                display: flex;
+                align-items: center;
+            }
+
+            .card-title i {
+                font-size: 1.5rem;
+                color: #4fc3f7;
+                margin-right: 10px;
+            }
+
+            .input-label {
+                color: #b3b8c3;
+                font-size: 0.98rem;
+                margin-bottom: 6px;
+            }
+
+            .input-area,
+            .output-area {
+                width: 100%;
+                min-height: 60px;
+                background: rgba(30, 32, 38, 0.7);
+                color: #e3e6f3;
+                border: 1px solid #444a;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+                padding: 12px 10px;
+                margin-bottom: 18px;
+                resize: vertical;
+                transition: border 0.2s;
+            }
+
+            .input-area:focus {
+                border: 1.5px solid #4fc3f7;
+                outline: none;
+            }
+
+            .output-area {
+                background: rgba(40, 50, 60, 0.7);
+                color: #b3e5fc;
+                margin-bottom: 0;
+            }
+
+            .btn-row {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 18px;
+            }
+
+            .btn {
+                background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 28px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 2px 8px #2196f344;
+                transition: background 0.18s, box-shadow 0.18s;
+            }
+
+            .btn:hover {
+                background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+                box-shadow: 0 4px 16px #21cbf344;
+            }
+
+            .error {
+                color: #ff6b81;
+                font-size: 0.98rem;
+                margin-bottom: 10px;
+                min-height: 22px;
+            }
+
+            .img-preview {
+                display: block;
+                max-width: 100%;
+                max-height: 220px;
+                margin: 10px auto 0 auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px #0003;
+                background: #222;
+            }
+
+            .back-link {
+                margin-top: 18px;
+                color: #4fc3f7;
+                text-decoration: none;
+                font-size: 1rem;
+                display: inline-block;
+            }
+
+            .back-link:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 700px) {
+                .main {
+                    max-width: 98vw;
+                    padding: 0 1vw 30px 1vw;
+                }
+
+                .card {
+                    padding: 18px 6px 18px 6px;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .header {
+                    height: 70px;
+                }
+
+                .avatar {
+                    width: 44px;
+                    height: 44px;
+                    margin: 0 12px 0 12px;
+                }
+
+                .site-title {
+                    font-size: 1.1rem;
+                }
+
+                .main {
+                    padding: 0 0 20px 0;
+                }
+            }
+        </style>
+    </head>
 
 <body>
     <div class="header">
@@ -282,6 +310,8 @@
             document.getElementById('error-msg').textContent = '';
         }
     </script>
+    <!-- 防止复制和查看源码的JavaScript -->
+    <script src="js/protect.js"></script>
 </body>
 
 </html>

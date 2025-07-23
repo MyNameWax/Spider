@@ -10,6 +10,7 @@
 ![JSON转SQL](info/json_to_sql.png)
 ![CURL To Code](info/curl.png)
 ![Base64ToImage](info/base.png)
+![端口扫描](info/port.png)
 
 项目提供了一系列实用的爬虫开发和数据处理工具，采用深色主题设计，界面简洁美观。
 
@@ -33,6 +34,10 @@
 - cURL 转代码：支持将 cURL 命令转换为 Python/Node.js/Go/Java 代码
 - Base64 图片工具：支持 Base64 和图片格式互转
 - 时间转换：支持时间戳与日期格式互转
+
+### 网络工具
+
+- 端口扫描：输入 IP 或域名，检测目标主机开放端口
 
 ### 加密工具
 
@@ -68,8 +73,14 @@
 ├── base64_image.html       # Base64图片转换
 ├── time_convert.html       # 时间转换
 ├── encrypt_tools.html      # 加密工具
-└── img/                    # 图片资源目录
-    └── avatar.jpg         # 网站头像
+├── port_scan.html          # 端口扫描
+├── img/                    # 图片资源目录
+│   └── avatar.jpg         # 网站头像
+├── info/                   # 说明/截图/二维码等
+│   └── home.png           # 首页截图
+│   └── qr.png             # 联系二维码
+└── js/                     # 公共JS脚本
+    └── protect.js         # 防护脚本
 ```
 
 ## 浏览器兼容性

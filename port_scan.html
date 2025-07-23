@@ -3,31 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>文本对比 - 爬虫工具箱</title>
-    <meta name="description" content="在线文本对比工具，支持高亮显示两段文本的不同。">
+    <title>端口扫描 - 爬虫工具箱</title>
+    <meta name="description" content="在线端口扫描工具，输入IP或域名，检测开放端口。">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
-    <!-- 版权信息 -->
-    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-
-    <!-- 防止复制代码的样式 -->
-    <style>
-        body {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .allow-select {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-    </style>
     <style>
         body {
             min-height: 100vh;
@@ -78,7 +57,7 @@
         }
 
         .main {
-            max-width: 900px;
+            max-width: 700px;
             margin: 38px auto 0 auto;
             padding: 0 2vw 40px 2vw;
         }
@@ -110,17 +89,15 @@
             margin-right: 10px;
         }
 
-        .text-area {
-            display: flex;
-            gap: 18px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
+        .input-label {
+            color: #b3b8c3;
+            font-size: 0.98rem;
+            margin-bottom: 6px;
         }
 
         .input-area {
             width: 100%;
-            min-width: 0;
-            min-height: 110px;
+            min-height: 40px;
             background: rgba(30, 32, 38, 0.7);
             color: #e3e6f3;
             border: 1px solid #444a;
@@ -128,6 +105,7 @@
             font-size: 1rem;
             font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
             padding: 12px 10px;
+            margin-bottom: 18px;
             resize: vertical;
             transition: border 0.2s;
         }
@@ -135,19 +113,6 @@
         .input-area:focus {
             border: 1.5px solid #4fc3f7;
             outline: none;
-        }
-
-        .input-col {
-            flex: 1 1 0;
-            min-width: 240px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-label {
-            color: #b3b8c3;
-            font-size: 0.98rem;
-            margin-bottom: 6px;
         }
 
         .btn-row {
@@ -181,7 +146,9 @@
             min-height: 22px;
         }
 
-        .diff-area {
+        .output-area {
+            width: 100%;
+            min-height: 120px;
             background: rgba(40, 50, 60, 0.7);
             color: #b3e5fc;
             border: 1px solid #444a;
@@ -189,25 +156,8 @@
             font-size: 1rem;
             font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
             padding: 12px 10px;
-            min-height: 80px;
             margin-bottom: 0;
-            white-space: pre-wrap;
-            overflow-x: auto;
-        }
-
-        .diff-add {
-            color: #7fff7f;
-            background: #1b3a1b;
-        }
-
-        .diff-del {
-            color: #ff6b81;
-            background: #3a1b1b;
-        }
-
-        .diff-mod {
-            color: #ffd166;
-            background: #3a2b1b;
+            resize: vertical;
         }
 
         .back-link {
@@ -222,21 +172,14 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 700px) {
             .main {
                 max-width: 98vw;
                 padding: 0 1vw 30px 1vw;
             }
-        }
 
-        @media (max-width: 700px) {
             .card {
                 padding: 18px 6px 18px 6px;
-            }
-
-            .text-area {
-                flex-direction: column;
-                gap: 8px;
             }
         }
 
@@ -272,80 +215,77 @@
     </div>
     <div class="main">
         <div class="card">
-            <div class="card-title"><i class="ri-contrast-drop-2-line"></i>文本对比</div>
-            <div class="text-area">
-                <div class="input-col">
-                    <div class="input-label">文本 1</div>
-                    <textarea class="input-area" id="text1" placeholder="请输入第一段文本..."></textarea>
-                </div>
-                <div class="input-col">
-                    <div class="input-label">文本 2</div>
-                    <textarea class="input-area" id="text2" placeholder="请输入第二段文本..."></textarea>
-                </div>
-            </div>
+            <div class="card-title"><i class="ri-radar-line"></i>端口扫描</div>
+            <div class="input-label">目标IP或域名</div>
+            <input class="input-area" id="target-input" placeholder="如 8.8.8.8 或 www.example.com" />
+            <div class="input-label">端口范围（如 1-1000，默认常用端口）</div>
+            <input class="input-area" id="port-range" placeholder="如 1-1000，可留空" />
             <div class="btn-row">
-                <button class="btn" onclick="compareText()">对比</button>
+                <button class="btn" onclick="scanPorts()">开始扫描</button>
                 <button class="btn" onclick="clearAll()" style="background: #444; color: #fff;">清空</button>
             </div>
             <div class="error" id="error-msg"></div>
-            <div class="diff-area" id="diff-area"></div>
+            <textarea class="output-area" id="scan-output" placeholder="开放端口结果会显示在这里..." readonly></textarea>
             <a class="back-link" href="index.html">← 返回主页</a>
         </div>
     </div>
     <script>
         function clearAll() {
-            document.getElementById('text1').value = '';
-            document.getElementById('text2').value = '';
+            document.getElementById('target-input').value = '';
+            document.getElementById('port-range').value = '';
+            document.getElementById('scan-output').value = '';
             document.getElementById('error-msg').textContent = '';
-            document.getElementById('diff-area').innerHTML = '';
         }
-        function compareText() {
-            const t1 = document.getElementById('text1').value;
-            const t2 = document.getElementById('text2').value;
+        // 端口扫描功能（仅能检测部分端口是否开放，受浏览器限制）
+        async function scanPorts() {
+            const target = document.getElementById('target-input').value.trim();
+            const portRange = document.getElementById('port-range').value.trim();
+            const output = document.getElementById('scan-output');
             const error = document.getElementById('error-msg');
-            const diffArea = document.getElementById('diff-area');
-            if (!t1 || !t2) {
-                error.textContent = '请填写两段文本';
-                diffArea.innerHTML = '';
+            output.value = '';
+            error.textContent = '';
+            if (!target) {
+                error.textContent = '请输入目标IP或域名';
                 return;
             }
-            error.textContent = '';
-            diffArea.innerHTML = diffLines(t1, t2);
-        }
-        // 行级diff
-        function diffLines(a, b) {
-            const aLines = a.split(/\r?\n/);
-            const bLines = b.split(/\r?\n/);
-            let html = '';
-            let i = 0, j = 0;
-            while (i < aLines.length || j < bLines.length) {
-                if (i < aLines.length && j < bLines.length) {
-                    if (aLines[i] === bLines[j]) {
-                        html += `<div>${escapeHTML(aLines[i])}</div>`;
-                        i++; j++;
-                    } else {
-                        html += `<div class='diff-mod'>文本1: ${escapeHTML(aLines[i])}</div>`;
-                        html += `<div class='diff-mod'>文本2: ${escapeHTML(bLines[j])}</div>`;
-                        i++; j++;
+            let ports = [];
+            if (portRange) {
+                const match = portRange.match(/^(\d+)-(\d+)$/);
+                if (match) {
+                    let start = parseInt(match[1]);
+                    let end = parseInt(match[2]);
+                    if (start > end || start < 1 || end > 65535) {
+                        error.textContent = '端口范围不合法';
+                        return;
                     }
-                } else if (i < aLines.length) {
-                    html += `<div class='diff-del'>仅在文本1: ${escapeHTML(aLines[i])}</div>`;
-                    i++;
+                    for (let i = start; i <= end; i++) ports.push(i);
                 } else {
-                    html += `<div class='diff-add'>仅在文本2: ${escapeHTML(bLines[j])}</div>`;
-                    j++;
+                    error.textContent = '端口范围格式错误';
+                    return;
+                }
+            } else {
+                // 默认常用端口
+                ports = [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 443, 445, 465, 587, 993, 995, 1433, 1521, 3306, 3389, 5432, 6379, 8080, 8443];
+            }
+            output.value = '正在扫描，请稍候...\n';
+            let openPorts = [];
+            for (let port of ports) {
+                try {
+                    await new Promise((resolve, reject) => {
+                        let img = new Image();
+                        img.onload = function () { openPorts.push(port); resolve(); };
+                        img.onerror = function () { resolve(); };
+                        img.src = `http://${target}:${port}/favicon.ico?_=${Date.now()}`;
+                        setTimeout(() => resolve(), 1200); // 超时
+                    });
+                    output.value = `已检测端口: ${port}\n` + output.value;
+                } catch (e) {
+                    // 忽略
                 }
             }
-            return html;
-        }
-        function escapeHTML(str) {
-            return str.replace(/[&<>"']/g, function (c) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-            });
+            output.value = `开放端口: ${openPorts.join(', ') || '未发现'}\n\n` + output.value;
         }
     </script>
-    <!-- 防止复制和查看源码的JavaScript -->
-    <script src="js/protect.js"></script>
 </body>
 
 </html>
