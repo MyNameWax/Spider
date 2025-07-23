@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CRON表达式生成器 - 爬虫工具箱</title>
+    <meta name="description" content="在线CRON表达式生成工具，支持可视化配置和文本互转，自动解析表达式含义。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
+    <!-- 防止复制代码的样式 -->
+    <style>
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .allow-select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .tab-btn.active {
+            opacity: 1;
+            box-shadow: 0 2px 8px #2196f344;
+        }
+
+        .quick-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .template-btn {
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .template-btn:hover {
+            background: rgba(40, 50, 60, 0.7);
+            border-color: #4fc3f7;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            color: #b3b8c3;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-input {
+            flex: 1;
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .form-select {
+            background: rgba(30, 32, 38, 0.7);
+            color: #e3e6f3;
+            border: 1px solid #444a;
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 120px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #2196f344;
+            transition: all 0.18s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            box-shadow: 0 4px 16px #21cbf344;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(30, 32, 38, 0.7);
+            border-radius: 8px;
+            border: 1px solid #444a;
+        }
+
+        .result-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .result-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .result-label {
+            color: #b3b8c3;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .result-value {
+            color: #e3e6f3;
+            flex: 1;
+        }
+
+        .btn-copy {
+            background: none;
+            border: none;
+            color: #4fc3f7;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 10px;
+        }
+
+        .back-link {
+            margin-top: 18px;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .main {
+                max-width: 98vw;
+                padding: 0 1vw 30px 1vw;
+            }
+
+            .card {
+                padding: 18px 6px 18px 6px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .main {
+                padding: 0 0 20px 0;
+            }
+        }
+
+        .template-btn.active {
+            background: #2196f3;
+            color: #fff;
+            border-color: #2196f3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-title"><i class="ri-calendar-check-line"></i>CRON表达式生成器</div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="generator">可视化生成</button>
+                <button class="tab-btn" data-tab="parser">表达式解析</button>
+            </div>
+
+            <!-- 生成器面板 -->
+            <div id="generator" class="tab-content active">
+                <div class="quick-templates">
+                    <button class="template-btn" data-cron="0 0 * * *">每天凌晨执行</button>
+                    <button class="template-btn" data-cron="0 */1 * * *">每小时执行</button>
+                    <button class="template-btn" data-cron="*/5 * * * *">每5分钟执行</button>
+                    <button class="template-btn" data-cron="0 9 * * 1-5">工作日早9点执行</button>
+                </div>
+
+                <div class="form-group">
+                    <label>分钟 (0-59)</label>
+                    <div class="input-group">
+                        <input type="text" id="minute" class="form-input" value="*">
+                        <select class="form-select" data-target="minute">
+                            <option value="*">每分钟</option>
+                            <option value="*/5">每5分钟</option>
+                            <option value="*/10">每10分钟</option>
+                            <option value="0">整点</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>小时 (0-23)</label>
+                    <div class="input-group">
+                        <input type="text" id="hour" class="form-input" value="*">
+                        <select class="form-select" data-target="hour">
+                            <option value="*">每小时</option>
+                            <option value="0">午夜12点</option>
+                            <option value="1">凌晨1点</option>
+                            <option value="9">早上9点</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>日期 (1-31)</label>
+                    <div class="input-group">
+                        <input type="text" id="day" class="form-input" value="*">
+                        <select class="form-select" data-target="day">
+                            <option value="*">每月每天</option>
+                            <option value="1">每月1日</option>
+                            <option value="15">每月15日</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>月份 (1-12)</label>
+                    <div class="input-group">
+                        <input type="text" id="month" class="form-input" value="*">
+                        <select class="form-select" data-target="month">
+                            <option value="*">每月</option>
+                            <option value="1">1月</option>
+                            <option value="6">6月</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>星期 (0-7) <small>(0和7都是星期日)</small></label>
+                    <div class="input-group">
+                        <input type="text" id="week" class="form-input" value="*">
+                        <select class="form-select" data-target="week">
+                            <option value="*">每周</option>
+                            <option value="1">星期一</option>
+                            <option value="5">星期五</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="button" id="generateBtn" class="btn">
+                    <i class="ri-magic-line"></i> 生成表达式
+                </button>
+            </div>
+
+            <!-- 解析器面板 -->
+            <div id="parser" class="tab-content">
+                <div class="form-group">
+                    <label>CRON表达式</label>
+                    <input type="text" id="cronInput" class="form-input" placeholder="输入CRON表达式，如: * * * * *">
+                </div>
+                <button type="button" id="parseBtn" class="btn">
+                    <i class="ri-search-line"></i> 解析表达式
+                </button>
+            </div>
+
+            <div id="resultSection" class="result-section" style="display:none;">
+                <div class="result-title">执行计划</div>
+                <div class="result-row">
+                    <span class="result-label">CRON表达式：</span>
+                    <span id="cronResult" class="result-value"></span>
+                    <button id="copyBtn" class="btn-copy" title="复制">
+                        <i class="ri-file-copy-line"></i>
+                    </button>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">表达式含义：</span>
+                    <span id="cronExplain" class="result-value"></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">最近5次执行：</span>
+                    <div id="nextTimes" class="result-value"></div>
+                </div>
+            </div>
+
+            <a class="back-link" href="index">← 返回主页</a>
+        </div>
+    </div>
+
+    <script>
+        // CRON解析与生成逻辑
+        class CronParser {
+            static fields = ['minute', 'hour', 'day', 'month', 'week'];
+            static ranges = {
+                minute: { min: 0, max: 59 },
+                hour: { min: 0, max: 23 },
+                day: { min: 1, max: 31 },
+                month: { min: 1, max: 12 },
+                week: { min: 0, max: 7 }
+            };
+
+            static validate(expression) {
+                const parts = expression.trim().split(/\s+/);
+                if (parts.length !== 5) return false;
+
+                return parts.every((part, index) => {
+                    const fieldName = this.fields[index];
+                    const range = this.ranges[fieldName];
+
+                    // 验证特殊字符
+                    if (part === '*') return true;
+                    if (part.includes('/')) {
+                        const [_, step] = part.split('/');
+                        return !isNaN(step) && step > 0;
+                    }
+
+                    // 验证数字和范围
+                    const values = part.split(',');
+                    return values.every(value => {
+                        if (value.includes('-')) {
+                            const [start, end] = value.split('-').map(Number);
+                            return !isNaN(start) && !isNaN(end) &&
+                                start >= range.min && end <= range.max && start <= end;
+                        }
+                        const num = parseInt(value);
+                        return !isNaN(num) && num >= range.min && num <= range.max;
+                    });
+                });
+            }
+
+            static explain(expression) {
+                try {
+                    const parts = expression.trim().split(/\s+/);
+                    if (parts.length !== 5) throw new Error('无效的CRON表达式');
+
+                    const explanations = [];
+                    const mapping = {
+                        minute: '分钟',
+                        hour: '小时',
+                        day: '日',
+                        month: '月',
+                        week: '周'
+                    };
+
+                    parts.forEach((part, index) => {
+                        const field = this.fields[index];
+                        const label = mapping[field];
+
+                        if (part === '*') {
+                            explanations.push(`每${label}`);
+                            return;
+                        }
+
+                        if (part.includes('/')) {
+                            const [_, step] = part.split('/');
+                            explanations.push(`每${step}${label}`);
+                            return;
+                        }
+
+                        if (part.includes('-')) {
+                            const [start, end] = part.split('-');
+                            if (field === 'week') {
+                                const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                                explanations.push(`${days[start]}至${days[end]}`);
+                            } else {
+                                explanations.push(`${start}至${end}${label}`);
+                            }
+                            return;
+                        }
+
+                        if (part.includes(',')) {
+                            if (field === 'week') {
+                                const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                                const dayNames = part.split(',').map(d => days[d]);
+                                explanations.push(`每${dayNames.join('、')}`);
+                            } else {
+                                explanations.push(`第${part.replace(/,/g, '、')}${label}`);
+                            }
+                            return;
+                        }
+
+                        if (field === 'week') {
+                            const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                            explanations.push(`每${days[part]}`);
+                        } else {
+                            explanations.push(`第${part}${label}`);
+                        }
+                    });
+
+                    return explanations.join('，');
+                } catch (error) {
+                    return '无效的CRON表达式';
+                }
+            }
+
+            static getNextExecutions(expression, count = 5) {
+                const now = new Date();
+                const times = [];
+                const parts = expression.split(' ');
+
+                // 简单实现：每次加一分钟检查是否匹配
+                let current = new Date(now);
+                while (times.length < count) {
+                    if (this.matches(current, parts)) {
+                        times.push(new Date(current));
+                    }
+                    current.setMinutes(current.getMinutes() + 1);
+                }
+
+                return times.map(time =>
+                    time.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })
+                );
+            }
+
+            static matches(date, parts) {
+                const [minute, hour, day, month, week] = parts;
+                const currentMinute = date.getMinutes();
+                const currentHour = date.getHours();
+                const currentDay = date.getDate();
+                const currentMonth = date.getMonth() + 1;
+                const currentWeek = date.getDay();
+
+                return this.matchField(currentMinute, minute) &&
+                    this.matchField(currentHour, hour) &&
+                    this.matchField(currentDay, day) &&
+                    this.matchField(currentMonth, month) &&
+                    this.matchField(currentWeek, week);
+            }
+
+            static matchField(value, pattern) {
+                if (pattern === '*') return true;
+
+                if (pattern.includes('/')) {
+                    const [_, step] = pattern.split('/');
+                    return value % parseInt(step) === 0;
+                }
+
+                if (pattern.includes('-')) {
+                    const [start, end] = pattern.split('-').map(Number);
+                    return value >= start && value <= end;
+                }
+
+                if (pattern.includes(',')) {
+                    return pattern.split(',').map(Number).includes(value);
+                }
+
+                return parseInt(pattern) === value;
+            }
+        }
+
+        // UI交互逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            // 标签切换
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                    btn.classList.add('active');
+                    document.getElementById(btn.dataset.tab).style.display = 'block';
+                });
+            });
+
+            // 快速模板
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('cronInput').value = btn.dataset.cron;
+                    document.getElementById('parseBtn').click();
+                });
+            });
+
+            // 生成按钮
+            document.getElementById('generateBtn').addEventListener('click', () => {
+                const minute = document.getElementById('minute').value.trim() || '*';
+                const hour = document.getElementById('hour').value.trim() || '*';
+                const day = document.getElementById('day').value.trim() || '*';
+                const month = document.getElementById('month').value.trim() || '*';
+                const week = document.getElementById('week').value.trim() || '*';
+
+                const cron = `${minute} ${hour} ${day} ${month} ${week}`;
+                showResult(cron);
+            });
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 反馈：高亮并显示“已应用”
+                    btn.classList.add('active');
+                    const original = btn.textContent;
+                    btn.textContent = original + '（已应用）';
+                    setTimeout(() => {
+                        btn.classList.remove('active');
+                        btn.textContent = original;
+                    }, 1000);
+
+                    document.getElementById('cronInput').value = btn.dataset.cron;
+                    document.getElementById('parseBtn').click();
+                });
+            });
+
+            // 解析按钮
+            document.getElementById('parseBtn').addEventListener('click', () => {
+                const cron = document.getElementById('cronInput').value.trim();
+                showResult(cron);
+            });
+
+            // 复制按钮
+            document.getElementById('copyBtn').addEventListener('click', function () {
+                const cron = document.getElementById('cronResult').textContent;
+                navigator.clipboard.writeText(cron).then(() => {
+                    this.innerHTML = '<i class="ri-check-line"></i>';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="ri-file-copy-line"></i>';
+                    }, 1000);
+                });
+            });
+
+            function showResult(cron) {
+                if (!CronParser.validate(cron)) {
+                    alert('无效的CRON表达式');
+                    return;
+                }
+
+                document.getElementById('cronResult').textContent = cron;
+                document.getElementById('cronExplain').textContent = CronParser.explain(cron);
+
+                const nextTimes = CronParser.getNextExecutions(cron);
+                document.getElementById('nextTimes').innerHTML = nextTimes
+                    .map(time => `<div>${time}</div>`)
+                    .join('');
+
+                document.getElementById('resultSection').style.display = 'block';
+            }
+
+            // 下拉框联动
+            document.querySelectorAll('.form-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const targetId = e.target.dataset.target;
+                    document.getElementById(targetId).value = e.target.value;
+                });
+            });
+        });
+    </script>
+
+    <script src="js/protect.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Properties/YAML转换 - 爬虫工具箱</title>
+    <meta name="description" content="在线Properties与YAML配置文件互转工具，支持双向转换和格式化。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            min-height: 320px;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .textarea-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-area {
+            flex: 1;
+            background: rgba(30, 32, 38, 0.7);
+            border: 1px solid #444a;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e3e6f3;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 300px;
+            outline: none;
+        }
+
+        .input-area:focus {
+            border-color: #4fc3f7;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #21cbf3 0%, #2196f3 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        .back-link {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .textarea-container {
+                flex-direction: column;
+            }
+
+            .input-area {
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-title">
+                <i class="ri-file-transfer-line"></i>Properties/YAML转换
+            </div>
+
+            <div class="textarea-container">
+                <textarea id="propertiesInput" class="input-area" placeholder="请输入Properties格式内容...
+例如:
+server.port=8080
+spring.application.name=demo
+spring.profiles.active=dev"></textarea>
+                <textarea id="yamlOutput" class="input-area" placeholder="YAML格式输出..." readonly></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn" onclick="convertToYAML()">
+                    <i class="ri-arrow-right-line"></i>转换为YAML
+                </button>
+                <button class="btn" onclick="convertToProperties()">
+                    <i class="ri-arrow-left-line"></i>转换为Properties
+                </button>
+                <button class="btn" onclick="copyResult()">
+                    <i class="ri-file-copy-line"></i>复制结果
+                </button>
+            </div>
+
+            <a href="index" class="back-link">← 返回主页</a>
+        </div>
+    </div>
+
+    <script>
+        function convertToYAML() {
+            const propertiesText = document.getElementById('propertiesInput').value.trim();
+            if (!propertiesText) {
+                alert('请输入Properties格式内容');
+                return;
+            }
+
+            try {
+                // 将Properties转换为对象
+                const lines = propertiesText.split('\n');
+                const result = {};
+
+                for (const line of lines) {
+                    if (line.trim() && !line.startsWith('#')) {
+                        const [key, ...values] = line.split('=');
+                        const value = values.join('=').trim();
+
+                        // 处理多级属性
+                        const parts = key.trim().split('.');
+                        let current = result;
+
+                        for (let i = 0; i < parts.length; i++) {
+                            const part = parts[i];
+                            if (i === parts.length - 1) {
+                                current[part] = value;
+                            } else {
+                                current[part] = current[part] || {};
+                                current = current[part];
+                            }
+                        }
+                    }
+                }
+
+                // 转换为YAML格式
+                const yaml = convertObjectToYAML(result);
+                document.getElementById('yamlOutput').value = yaml;
+            } catch (error) {
+                alert('转换失败：' + error.message);
+            }
+        }
+
+        function convertToProperties() {
+            const yamlText = document.getElementById('propertiesInput').value.trim();
+            if (!yamlText) {
+                alert('请输入YAML格式内容');
+                return;
+            }
+
+            try {
+                // 将YAML转换为对象
+                const lines = yamlText.split('\n');
+                const result = {};
+                let currentIndent = 0;
+                let path = [];
+
+                for (const line of lines) {
+                    if (line.trim() && !line.startsWith('#')) {
+                        const indent = line.search(/\S/);
+                        if (indent < currentIndent) {
+                            path = path.slice(0, indent / 2);
+                        }
+                        currentIndent = indent;
+
+                        const [key, ...values] = line.trim().split(':');
+                        const value = values.join(':').trim();
+
+                        if (value) {
+                            const fullPath = [...path, key].join('.');
+                            result[fullPath] = value;
+                        } else {
+                            path.push(key);
+                        }
+                    }
+                }
+
+                // 转换为Properties格式
+                const properties = Object.entries(result)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('\n');
+
+                document.getElementById('yamlOutput').value = properties;
+            } catch (error) {
+                alert('转换失败：' + error.message);
+            }
+        }
+
+        function convertObjectToYAML(obj, indent = 0) {
+            let yaml = '';
+            const spaces = ' '.repeat(indent);
+
+            for (const [key, value] of Object.entries(obj)) {
+                if (typeof value === 'object') {
+                    yaml += `${spaces}${key}:\n${convertObjectToYAML(value, indent + 2)}`;
+                } else {
+                    yaml += `${spaces}${key}: ${value}\n`;
+                }
+            }
+
+            return yaml;
+        }
+
+        function copyResult() {
+            const output = document.getElementById('yamlOutput');
+            output.select();
+            document.execCommand('copy');
+
+            const btn = event.target.closest('.btn');
+            const icon = btn.querySelector('i');
+            const originalIcon = icon.className;
+
+            icon.className = 'ri-check-line';
+            setTimeout(() => {
+                icon.className = originalIcon;
+            }, 1000);
+        }
+    </script>
+
+    <script src="js/protect.js"></script>
+</body>
+
+</html>

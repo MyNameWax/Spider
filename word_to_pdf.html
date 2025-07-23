@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Word 转 PDF - 爬虫工具箱</title>
+    <meta name="description" content="在线将 Word 文档转换为 PDF 格式，支持 docx 格式。">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="./icon/icon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <meta name="copyright" content="© 2025 MyNameWax. All rights reserved.">
+    <!-- mammoth.js 用于转换 Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- html2pdf.js 用于生成 PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .header {
+            width: 100vw;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(30, 32, 38, 0.85);
+            box-shadow: 0 2px 16px 0 #0003;
+            height: 90px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 28px 0 38px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        .site-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .site-title {
+            color: #fff;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .site-desc {
+            color: #b3b8c3;
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+
+        .main {
+            max-width: 800px;
+            margin: 38px auto 0 auto;
+            padding: 0 2vw 40px 2vw;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px 0 #0002;
+            padding: 32px 28px 28px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+        }
+
+        .upload-area:hover {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: #4fc3f7;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-desc {
+            color: #b3b8c3;
+            font-size: 0.9rem;
+        }
+
+        .file-info {
+            background: rgba(30, 32, 38, 0.7);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .file-name {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .file-size {
+            color: #b3b8c3;
+            font-size: 0.9rem;
+        }
+
+        .convert-btn {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .convert-btn i {
+            font-size: 1.2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .back-link {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+            margin-top: 24px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        #preview {
+            display: none;
+            margin-top: 24px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                height: 70px;
+            }
+
+            .avatar {
+                width: 44px;
+                height: 44px;
+                margin: 0 12px;
+            }
+
+            .site-title {
+                font-size: 1.1rem;
+            }
+
+            .upload-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img class="avatar" src="./img/avatar.jpg" alt="作者头像">
+        <div class="site-info">
+            <div class="site-title">爬虫工具箱</div>
+            <div class="site-desc">专注于爬虫与数据处理的在线工具箱</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-title">
+                <i class="ri-file-word-2-line"></i>Word 转 PDF
+            </div>
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" accept=".docx" style="display: none"
+                    onchange="handleFileSelect(event)">
+                <i class="ri-upload-cloud-2-line"></i>
+                <div class="upload-text">点击或拖拽上传 Word 文档</div>
+                <div class="upload-desc">支持 .docx 格式</div>
+            </div>
+
+            <div id="fileInfo" class="file-info">
+                <div class="file-name"></div>
+                <div class="file-size"></div>
+            </div>
+
+            <button id="convertBtn" class="convert-btn" disabled onclick="convertToPDF()">
+                <i class="ri-file-pdf-line"></i>转换为 PDF
+            </button>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div id="preview"></div>
+
+            <a href="index" class="back-link">← 返回主页</a>
+        </div>
+    </div>
+
+    <script>
+        let currentFile = null;
+
+        // 处理文件选择
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.docx')) {
+                alert('请选择 .docx 格式的文件');
+                return;
+            }
+
+            currentFile = file;
+            document.getElementById('fileInfo').style.display = 'block';
+            document.getElementById('fileInfo').querySelector('.file-name').textContent = file.name;
+            document.getElementById('fileInfo').querySelector('.file-size').textContent =
+                `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            document.getElementById('convertBtn').disabled = false;
+        }
+
+        // 转换为PDF
+        async function convertToPDF() {
+            if (!currentFile) return;
+
+            try {
+                const convertBtn = document.getElementById('convertBtn');
+                const progressBar = document.getElementById('progressBar');
+                const progress = document.getElementById('progress');
+                const preview = document.getElementById('preview');
+
+                convertBtn.disabled = true;
+                progressBar.style.display = 'block';
+                progress.style.width = '30%';
+
+                // 读取Word文件
+                const arrayBuffer = await currentFile.arrayBuffer();
+
+                // 转换为HTML
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                preview.innerHTML = result.value;
+                preview.style.display = 'block';
+                progress.style.width = '60%';
+
+                // 配置PDF选项
+                const opt = {
+                    margin: 1,
+                    filename: currentFile.name.replace('.docx', '.pdf'),
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                // 转换为PDF
+                progress.style.width = '90%';
+                await html2pdf().set(opt).from(preview).save();
+
+                progress.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    progress.style.width = '0%';
+                    convertBtn.disabled = false;
+                    preview.style.display = 'none';
+                }, 1000);
+
+            } catch (error) {
+                alert('转换失败：' + error.message);
+                document.getElementById('convertBtn').disabled = false;
+            }
+        }
+
+        // 拖拽上传
+        const uploadArea = document.querySelector('.upload-area');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4fc3f7';
+            uploadArea.style.background = 'rgba(79, 195, 247, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            uploadArea.style.background = 'none';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            uploadArea.style.background = 'none';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.docx')) {
+                const input = document.getElementById('fileInput');
+                input.files = e.dataTransfer.files;
+                handleFileSelect({ target: input });
+            } else {
+                alert('请选择 .docx 格式的文件');
+            }
+        });
+    </script>
+
+    <script src="js/protect.js"></script>
+</body>
+
+</html>
